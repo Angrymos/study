@@ -4,32 +4,32 @@ module Exercise
   module Fp
     class << self
       def rating(films)
-        count = 0
         ratings = films.map do |film| 
-          countries = film["country"]&.split(pattern=",")
-          countryCount = countries.nil? ? 0 : countries.length
+          next nil unless film["country"]
+
+          countries = film["country"].split(pattern=",")
           rating = film["rating_kinopoisk"].to_f
           
-          if (rating.positive? and countryCount >= 2) 
-            count += 1
+          if (rating.positive? and countries.length >= 2)
             rating
           else
-            0
+            nil
           end
         end
        
-        raitingSummary = ratings.reduce(:+)
-        raitingSummary / count
+        ratings = ratings.compact
+        raiting_summary = ratings.reduce(:+)
+        raiting_summary / ratings.length
       end
 
       def chars_count(films, threshold)
         names = films.map do |film|
           rating = film["rating_kinopoisk"].to_f
-          rating >= threshold ? film["name"] : ""
+          rating >= threshold ? film["name"] : nil
         end
         
+        names = names.compact
         count = names.reduce(0) { |sum, name| sum + name.count("и") }
-        puts(count)
       end
     end
   end
